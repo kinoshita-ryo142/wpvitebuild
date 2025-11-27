@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import type { ComponentType, MouseEventHandler } from 'react';
 import { 
   FileCode, 
@@ -15,6 +15,7 @@ import {
   Info,
   Eye
 } from 'lucide-react';
+import BackToTop from './components/ui/back-to-top';
 
 type WorkflowStepProps = {
   title: string;
@@ -79,9 +80,9 @@ type DetailPanelProps = {
   data?: StepsMap;
 };
 
-const DetailPanel: React.FC<DetailPanelProps> = ({ activeStep, data }) => {
+const DetailPanel = React.forwardRef<HTMLDivElement, DetailPanelProps>(({ activeStep, data }, ref) => {
   if (!activeStep || !data) return (
-    <div className="mt-8 p-8 bg-slate-50 rounded-xl border border-dashed border-slate-300 text-center text-slate-400">
+    <div ref={ref} className="mt-8 p-8 bg-slate-50 rounded-xl border border-dashed border-slate-300 text-center text-slate-400">
       <Info className="inline-block mb-2" size={32} />
       <p>上の各ステップをクリックして詳細を確認してください</p>
     </div>
@@ -91,7 +92,7 @@ const DetailPanel: React.FC<DetailPanelProps> = ({ activeStep, data }) => {
   const Icon = stepData.icon;
 
   return (
-    <div className="mt-8 bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden animate-in fade-in slide-in-from-top-4 duration-300">
+    <div ref={ref} className="mt-8 bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden animate-in fade-in slide-in-from-top-4 duration-300">
       <div className={`bg-${stepData.color}-500 text-white p-4 flex items-center gap-3`}>
         <Icon size={24} />
         <h2 className="text-xl font-bold">{stepData.title}</h2>
@@ -130,10 +131,19 @@ const DetailPanel: React.FC<DetailPanelProps> = ({ activeStep, data }) => {
       </div>
     </div>
   );
-};
+});
 
 export default function WPViteWorkflow() {
   const [activeStep, setActiveStep] = useState('wordpress'); // 変更点が見やすいようにデフォルトを変更
+  const detailRef = useRef<HTMLDivElement | null>(null);
+
+  const handleSelect = (id: string) => {
+    setActiveStep(id);
+    // 少し遅延して DOM 更新後にスクロール
+    setTimeout(() => {
+      detailRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 120);
+  };
 
   const steps: StepsMap = {
     env: {
@@ -369,7 +379,7 @@ add_filter('script_loader_tag', 'add_module_type_to_vite_scripts', 10, 2);`
     <WorkflowStep 
       {...steps[id]} 
       isActive={activeStep === id} 
-      onClick={() => setActiveStep(id)} 
+      onClick={() => handleSelect(id)} 
     />
   );
 
@@ -429,7 +439,7 @@ add_filter('script_loader_tag', 'add_module_type_to_vite_scripts', 10, 2);`
         </div>
 
         {/* Details Area */}
-        <DetailPanel activeStep={activeStep} data={steps} />
+        <DetailPanel ref={detailRef} activeStep={activeStep} data={steps} />
 
         {/* Footer Notes */}
         <div className="mt-12 grid md:grid-cols-3 gap-4 text-xs text-slate-500">
@@ -447,6 +457,7 @@ add_filter('script_loader_tag', 'add_module_type_to_vite_scripts', 10, 2);`
           </div>
         </div>
       </div>
+    <BackToTop />
     </div>
   );
 }
