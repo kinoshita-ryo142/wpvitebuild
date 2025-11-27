@@ -16,6 +16,7 @@ import {
   Eye
 } from 'lucide-react';
 import BackToTop from './components/ui/back-to-top';
+import { SpeedInsights } from "@vercel/speed-insights/react"
 
 type WorkflowStepProps = {
   title: string;
@@ -390,6 +391,7 @@ add_filter('script_loader_tag', 'add_module_type_to_vite_scripts', 10, 2);`
           <h1 className="text-3xl font-bold text-slate-800 mb-2">WordPressテーマ開発ワークフロー</h1>
           <p className="text-slate-500">Node.js, Vite, Tailwind CSS (v4) - シンプル構成</p>
         </header>
+        <SpeedInsights/>
 
         {/* Workflow Diagram Area */}
         <div className="bg-white p-6 md:p-10 rounded-2xl shadow-sm border border-slate-200 overflow-x-auto">
