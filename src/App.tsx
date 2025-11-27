@@ -249,7 +249,7 @@ export default defineConfig({
       }
     },
     postcss: {
-      title: "JIT Engine & Watch",
+      title: "即時生成とファイル監視",
       description: "PHP監視 & CSS生成",
       icon: Eye, 
       color: "cyan",
@@ -306,11 +306,11 @@ export default defineConfig({
       description: "WP_DEBUGによる分岐と読み込み",
       icon: Globe,
       color: "slate",
-      longDescription: "functions.phpにて `WP_DEBUG` 定数の値を判定し、読み込みリソースを切り替えます。True（開発中）の場合はVite開発サーバーへ接続してHMRを有効にし、False（本番）の場合はdistフォルダの最適化されたファイルを読み込みます。また、ViteのアセットはESモジュールとして読み込むため、scriptタグの属性変更も行います。",
+      longDescription: "functions.phpにて、wp-config.phpの`WP_DEBUG` 定数の値を判定し、読み込みリソースを切り替えます。True（開発中）の場合はVite開発サーバーへ接続してHMRを有効にし、False（本番）の場合はdistフォルダの最適化されたファイルを読み込みます。また、ViteのアセットはESモジュールとして読み込むため、scriptタグの属性変更も行います。",
       points: [
-        "WP_DEBUG=true なら localhost:5173",
-        "WP_DEBUG=false なら distファイル",
-        "scriptタグに type=\"module\" を付与",
+        "WP_DEBUGが「true」なら localhost:5173",
+        "WP_DEBUGが「false」なら distファイルを読み込み",
+        "scriptタグに type=\"module\" を自動付与",
         "wp_enqueue_scripts アクションで実行"
       ],
       fileExample: {
@@ -385,7 +385,7 @@ add_filter('script_loader_tag', 'add_module_type_to_vite_scripts', 10, 2);`
         <div className="bg-white p-6 md:p-10 rounded-2xl shadow-sm border border-slate-200 overflow-x-auto">
           
           {/* Top Row: Environment & Config */}
-          <div className="flex flex-col md:flex-row justify-center items-center gap-4 mb-8 md:mb-12">
+          <div className="flex flex-col md:flex-row justify-center items-center gap-4 mb-4 md:mb-12">
              <StepComponent id="env" />
           </div>
 
@@ -395,11 +395,11 @@ add_filter('script_loader_tag', 'add_module_type_to_vite_scripts', 10, 2);`
           </div>
 
           {/* Main Flow: Source -> Process -> Output */}
-          <div className="flex flex-col md:flex-row items-stretch justify-between gap-4 relative">
+          <div className="flex flex-col md:flex-row items-stretch justify-between gap-4 relative mt-4">
             
             {/* Group: Source */}
             <div className="flex flex-col gap-4 flex-1">
-              <div className="text-center text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">開発 (Development)</div>
+              <div className="text-center font-bold text-slate-400 uppercase tracking-wider mb-2">開発</div>
               <StepComponent id="source" />
             </div>
 
@@ -407,7 +407,7 @@ add_filter('script_loader_tag', 'add_module_type_to_vite_scripts', 10, 2);`
 
             {/* Group: Build Process */}
             <div className="flex flex-col gap-4 flex-1">
-              <div className="text-center text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">ビルドシステム (Build System)</div>
+              <div className="text-center font-bold text-slate-400 uppercase tracking-wider mb-2">ビルド</div>
               <div className="bg-purple-50 rounded-xl p-4 border border-purple-100 flex flex-col gap-4">
                 <StepComponent id="build" />
                 <div className="flex justify-center text-purple-300"><ArrowDown size={20} /></div>
@@ -419,7 +419,7 @@ add_filter('script_loader_tag', 'add_module_type_to_vite_scripts', 10, 2);`
 
             {/* Group: Production */}
             <div className="flex flex-col gap-4 flex-1">
-              <div className="text-center text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">本番テーマ (Production)</div>
+              <div className="text-center font-bold text-slate-400 uppercase tracking-wider mb-2">本公開</div>
               <StepComponent id="output" />
               <div className="flex justify-center text-slate-300"><ArrowDown size={20} /></div>
               <StepComponent id="wordpress" />
