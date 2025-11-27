@@ -161,7 +161,7 @@ export default function WPViteWorkflow() {
       fileExample: {
         name: "package.json",
         code: `{
-  "name": "nakashima-kenki",
+  "name": "myProjectName",
   "private": true,
   "version": "0.0.0",
   "type": "module",
