@@ -27,29 +27,43 @@ type WorkflowStepProps = {
   description?: string;
 };
 
-const WorkflowStep = ({ title, icon: Icon, color, isActive, onClick, description }: WorkflowStepProps) => (
-  <div 
-    onClick={onClick}
-    className={`
-      relative p-4 rounded-xl border-2 cursor-pointer transition-all duration-300 ease-in-out
-      flex flex-col items-center gap-3 min-w-[140px] shadow-sm hover:shadow-md
-      ${isActive 
-        ? `border-${color}-500 bg-${color}-50 scale-105 ring-2 ring-${color}-200` 
-        : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50'}
-    `}
-  >
-    <div className={`p-3 rounded-full bg-${color}-100 text-${color}-600`}>
-      <Icon size={24} />
+const WorkflowStep = ({ title, icon: Icon, color, isActive, onClick, description }: WorkflowStepProps) => {
+  const palette: Record<string, {
+    border: string;
+    bgLight: string;
+    iconBg: string;
+    iconText: string;
+    ring: string;
+  }> = {
+    red: { border: 'border-red-500', bgLight: 'bg-red-50', iconBg: 'bg-red-100', iconText: 'text-red-600', ring: 'ring-2 ring-red-200' },
+    blue: { border: 'border-blue-500', bgLight: 'bg-blue-50', iconBg: 'bg-blue-100', iconText: 'text-blue-600', ring: 'ring-2 ring-blue-200' },
+    purple: { border: 'border-purple-500', bgLight: 'bg-purple-50', iconBg: 'bg-purple-100', iconText: 'text-purple-600', ring: 'ring-2 ring-purple-200' },
+    cyan: { border: 'border-cyan-500', bgLight: 'bg-cyan-50', iconBg: 'bg-cyan-100', iconText: 'text-cyan-600', ring: 'ring-2 ring-cyan-200' },
+    emerald: { border: 'border-emerald-500', bgLight: 'bg-emerald-50', iconBg: 'bg-emerald-100', iconText: 'text-emerald-600', ring: 'ring-2 ring-emerald-200' },
+    slate: { border: 'border-slate-500', bgLight: 'bg-slate-50', iconBg: 'bg-slate-100', iconText: 'text-slate-600', ring: 'ring-2 ring-slate-200' },
+  };
+
+  const p = palette[color] ?? palette.slate;
+
+  const base = 'relative p-4 rounded-xl border-2 cursor-pointer transition-all duration-300 ease-in-out flex flex-col items-center gap-3 min-w-[140px] shadow-sm hover:shadow-md';
+  const activeClasses = `${p.border} ${p.bgLight} scale-105 ${p.ring}`;
+  const inactiveClasses = 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50';
+
+  return (
+    <div onClick={onClick} className={`${base} ${isActive ? activeClasses : inactiveClasses}`}>
+      <div className={`p-3 rounded-full ${p.iconBg} ${p.iconText}`}>
+        <Icon size={24} />
+      </div>
+      <div className="text-center">
+        <h3 className="font-bold text-slate-700 text-sm md:text-base">{title}</h3>
+        <p className="text-xs text-slate-500 mt-1 line-clamp-2 hidden md:block">{description}</p>
+      </div>
+      {isActive && (
+        <div className={`absolute -bottom-2 w-4 h-4 ${p.bgLight} border-r-2 border-b-2 ${p.border.replace('border-', 'border-') } rotate-45`}></div>
+      )}
     </div>
-    <div className="text-center">
-      <h3 className="font-bold text-slate-700 text-sm md:text-base">{title}</h3>
-      <p className="text-xs text-slate-500 mt-1 line-clamp-2 hidden md:block">{description}</p>
-    </div>
-    {isActive && (
-      <div className={`absolute -bottom-2 w-4 h-4 bg-${color}-50 border-r-2 border-b-2 border-${color}-500 rotate-45`}></div>
-    )}
-  </div>
-);
+  );
+};
 
 type ConnectionProps = { active?: boolean };
 const Connection = ({ active }: ConnectionProps) => (
@@ -91,10 +105,22 @@ const DetailPanel = React.forwardRef<HTMLDivElement, DetailPanelProps>(({ active
   const stepData = data[activeStep];
 
   const Icon = stepData.icon;
+  const colorMap: Record<string, string> = {
+    red: 'bg-red-500',
+    blue: 'bg-blue-500',
+    purple: 'bg-purple-500',
+    cyan: 'bg-cyan-500',
+    emerald: 'bg-emerald-500',
+    slate: 'bg-slate-500',
+    red50: 'bg-red-50',
+  };
+
+  const headerBg = colorMap[stepData.color] ?? 'bg-slate-500';
+  const dotBg = headerBg.replace('bg-', 'bg-');
 
   return (
     <div ref={ref} className="mt-8 bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden animate-in fade-in slide-in-from-top-4 duration-300">
-      <div className={`bg-${stepData.color}-500 text-white p-4 flex items-center gap-3`}>
+      <div className={`${headerBg} text-white p-4 flex items-center gap-3`}>
         <Icon size={24} />
         <h2 className="text-xl font-bold">{stepData.title}</h2>
       </div>
@@ -113,7 +139,7 @@ const DetailPanel = React.forwardRef<HTMLDivElement, DetailPanelProps>(({ active
           <ul className="space-y-2">
             {stepData.points.map((point, idx) => (
               <li key={idx} className="flex items-start gap-2 text-sm text-slate-600">
-                <span className={`mt-1.5 w-1.5 h-1.5 rounded-full bg-${stepData.color}-500 flex-shrink-0`}></span>
+                <span className={`mt-1.5 w-1.5 h-1.5 rounded-full ${dotBg} flex-shrink-0`}></span>
                 {point}
               </li>
             ))}
